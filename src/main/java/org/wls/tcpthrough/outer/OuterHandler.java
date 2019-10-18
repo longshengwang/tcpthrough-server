@@ -1,11 +1,13 @@
 package org.wls.tcpthrough.outer;
 
-import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.wls.tcpthrough.Tools;
 import org.wls.tcpthrough.model.ConnectModel;
 import org.wls.tcpthrough.model.GlobalObject;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse;
+import org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol;
 import org.wls.tcpthrough.model.ResponseType;
 
 
@@ -14,39 +16,50 @@ import org.wls.tcpthrough.model.ResponseType;
  */
 public class OuterHandler extends ChannelInboundHandlerAdapter {
 
+    private static final Logger LOG = LogManager.getLogger(OuterHandler.class);
+
     private boolean isBind = false;
     private String channelId;
     private GlobalObject globalObject;
     private Channel dataChannel;
     private Channel manageChannel;
+    private RegisterProtocol registerProtocol;;
 
-    public OuterHandler(Channel manageChannel, GlobalObject globalObject){
+    public OuterHandler(Channel manageChannel, GlobalObject globalObject, RegisterProtocol registerProtocol){
         this.manageChannel = manageChannel;
         this.globalObject = globalObject;
+        this.registerProtocol = registerProtocol;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("OUThandle 有新连接来了");
+        LOG.debug("Outer server has a new connection");
         channelId = Tools.uuid();
         while (globalObject.isOuterChannelUUIDExist(channelId)) {
             channelId = Tools.uuid();
         }
-//        System.out.println("OUThandle 最终 channel id 是 " + channelId);
 
         ConnectModel connectModel = new ConnectModel(channelId, this, ctx.channel());
         globalObject.putOuterConnection(channelId, connectModel);
+
+        //One manage channel may operate multi register,so add proxy port to tell manage client.
+        String protocolChannelId = registerProtocol.getRemoteProxyPort() + ":" + channelId;
+
         ManagerResponse response = ManagerResponse.newBuilder()
                 .setType(ResponseType.NEW_CONN_RESPONSE.get())
-                .setChannel(channelId)
+                .setValue(protocolChannelId)
+                .setValueMd5(Tools.getMD5(protocolChannelId))
                 .build();
+
         manageChannel.writeAndFlush(response).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if(future.isSuccess()){
-//                    System.out.println("OUT 告诉 client channel id 成功");
+                    LOG.debug("Data write manage client successfully");
                 } else {
-//                    System.out.println("OUT 告诉 client channel id 失败");
+                    LOG.error("Data write manage client error");
+                    ctx.channel().close();
+                    globalObject.deleteOuterConnection(channelId);
                 }
             }
         });
@@ -67,35 +80,38 @@ public class OuterHandler extends ChannelInboundHandlerAdapter {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-//                    System.out.println("OUT 成功写数据到 data client");
                     ctx.channel().read();
                 } else {
-                    System.out.println("OUT 写数据到client ERROR");
+                    LOG.error("Out data write to inner data client error");
+                    dataChannel.close();
+                    ctx.channel().close();
                 }
             }
         });
     }
 
-    @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-//        System.out.println("OUT read COMPLETE");
-    }
+//    @Override
+//    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+//    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        super.exceptionCaught(ctx, cause);
-        System.out.println("OUT exceptionCaught");
+        LOG.error("", cause);
+        ctx.channel().close();
+        globalObject.deleteOuterConnection(channelId);
+        if (dataChannel != null) {
+            dataChannel.close();
+        }
     }
 
-    //    public Channel getDataChannel() {
-//        return dataChannel;
-//    }
+
 
     public void setDataChannel(Channel dataChannel) {
         this.dataChannel = dataChannel;
     }
 
-//    public String getChannelId() {
-//        return channelId;
-//    }
+    public RegisterProtocol getRegisterProtocol() {
+        return registerProtocol;
+    }
+
 }

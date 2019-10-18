@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * Created by wls on 2019/10/15.
  */
 public class ManagerServer implements Runnable{
-    private static final Logger LOGGER = LogManager.getLogger(ManagerServer.class);
+    private static final Logger LOG = LogManager.getLogger(ManagerServer.class);
     private Integer port;
     private GlobalObject globalObject;
 
@@ -57,12 +57,20 @@ public class ManagerServer implements Runnable{
                         }
                     });
 
-            ChannelFuture cf = bootstrap.bind(port).sync();
+            ChannelFuture cf = bootstrap.bind(port).sync().addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if(future.isSuccess()){
+                        LOG.info("Manager Server run successfully.");
+                    } else {
+                        LOG.error("Manager Server run failed!");
+                    }
+                }
+            });
 
-            System.out.println("Re server run ssss\n");
             cf.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            LOG.error("", e);
         } finally {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();

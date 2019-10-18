@@ -4,8 +4,7 @@ package org.wls.tcpthrough.model;
  * Created by wls on 2019/10/16.
  */
 public enum ResponseType {
-    REGISTER_RESPONSE(1),
-    NEW_CONN_RESPONSE(2);
+    REGISTER_RESPONSE(1), NEW_CONN_RESPONSE(2), NEW_CONF_RESPONSE(3),DELETE_CONF_RESPONSE(4),REGISTER_FAIL(5);
 
     // 定义一个 private 修饰的实例变量
     private int type;

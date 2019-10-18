@@ -143,6 +143,24 @@ public final class ManagerProtocolBuf {
      * @return The remoteManagerPort.
      */
     int getRemoteManagerPort();
+
+    /**
+     * <code>string publicKey = 15;</code>
+     * @return The publicKey.
+     */
+    String getPublicKey();
+    /**
+     * <code>string publicKey = 15;</code>
+     * @return The bytes for publicKey.
+     */
+    com.google.protobuf.ByteString
+        getPublicKeyBytes();
+
+    /**
+     * <code>bool isRemoteManage = 16;</code>
+     * @return The isRemoteManage.
+     */
+    boolean getIsRemoteManage();
   }
   /**
    * Protobuf type {@code RegisterProtocol}
@@ -161,6 +179,7 @@ public final class ManagerProtocolBuf {
       secretKeyMd5_ = "";
       localHost_ = "";
       remoteHost_ = "";
+      publicKey_ = "";
     }
     public static final int NAME_FIELD_NUMBER = 1;
     private String name_;
@@ -734,73 +753,151 @@ public final class ManagerProtocolBuf {
       remoteManagerPort_ = 0;
     }
 
-    public static RegisterProtocol parseFrom(
+    public static final int PUBLICKEY_FIELD_NUMBER = 15;
+    private String publicKey_;
+    /**
+     * <code>string publicKey = 15;</code>
+     * @return The publicKey.
+     */
+    @Override
+    public String getPublicKey() {
+      return publicKey_;
+    }
+    /**
+     * <code>string publicKey = 15;</code>
+     * @return The bytes for publicKey.
+     */
+    @Override
+    public com.google.protobuf.ByteString
+        getPublicKeyBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(publicKey_);
+    }
+    /**
+     * <code>string publicKey = 15;</code>
+     * @param value The publicKey to set.
+     */
+    private void setPublicKey(
+        String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+
+      publicKey_ = value;
+    }
+    /**
+     * <code>string publicKey = 15;</code>
+     */
+    private void clearPublicKey() {
+
+      publicKey_ = getDefaultInstance().getPublicKey();
+    }
+    /**
+     * <code>string publicKey = 15;</code>
+     * @param value The bytes for publicKey to set.
+     */
+    private void setPublicKeyBytes(
+        com.google.protobuf.ByteString value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+
+      publicKey_ = value.toStringUtf8();
+    }
+
+    public static final int ISREMOTEMANAGE_FIELD_NUMBER = 16;
+    private boolean isRemoteManage_;
+    /**
+     * <code>bool isRemoteManage = 16;</code>
+     * @return The isRemoteManage.
+     */
+    @Override
+    public boolean getIsRemoteManage() {
+      return isRemoteManage_;
+    }
+    /**
+     * <code>bool isRemoteManage = 16;</code>
+     * @param value The isRemoteManage to set.
+     */
+    private void setIsRemoteManage(boolean value) {
+
+      isRemoteManage_ = value;
+    }
+    /**
+     * <code>bool isRemoteManage = 16;</code>
+     */
+    private void clearIsRemoteManage() {
+
+      isRemoteManage_ = false;
+    }
+
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static RegisterProtocol parseFrom(byte[] data)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static RegisterProtocol parseFrom(java.io.InputStream input)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input, extensionRegistry);
     }
-    public static RegisterProtocol parseDelimitedFrom(java.io.InputStream input)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return parseDelimitedFrom(DEFAULT_INSTANCE, input);
     }
-    public static RegisterProtocol parseDelimitedFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input);
     }
-    public static RegisterProtocol parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -811,7 +908,7 @@ public final class ManagerProtocolBuf {
     public static Builder newBuilder() {
       return (Builder) DEFAULT_INSTANCE.createBuilder();
     }
-    public static Builder newBuilder(RegisterProtocol prototype) {
+    public static Builder newBuilder(org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol prototype) {
       return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
     }
 
@@ -822,7 +919,7 @@ public final class ManagerProtocolBuf {
         com.google.protobuf.GeneratedMessageLite.Builder<
           RegisterProtocol, Builder> implements
         // @@protoc_insertion_point(builder_implements:RegisterProtocol)
-        RegisterProtocolOrBuilder {
+        org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocolOrBuilder {
       // Construct using org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol.newBuilder()
       private Builder() {
         super(DEFAULT_INSTANCE);
@@ -1389,6 +1486,83 @@ public final class ManagerProtocolBuf {
         return this;
       }
 
+      /**
+       * <code>string publicKey = 15;</code>
+       * @return The publicKey.
+       */
+      @Override
+      public String getPublicKey() {
+        return instance.getPublicKey();
+      }
+      /**
+       * <code>string publicKey = 15;</code>
+       * @return The bytes for publicKey.
+       */
+      @Override
+      public com.google.protobuf.ByteString
+          getPublicKeyBytes() {
+        return instance.getPublicKeyBytes();
+      }
+      /**
+       * <code>string publicKey = 15;</code>
+       * @param value The publicKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPublicKey(
+          String value) {
+        copyOnWrite();
+        instance.setPublicKey(value);
+        return this;
+      }
+      /**
+       * <code>string publicKey = 15;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearPublicKey() {
+        copyOnWrite();
+        instance.clearPublicKey();
+        return this;
+      }
+      /**
+       * <code>string publicKey = 15;</code>
+       * @param value The bytes for publicKey to set.
+       * @return This builder for chaining.
+       */
+      public Builder setPublicKeyBytes(
+          com.google.protobuf.ByteString value) {
+        copyOnWrite();
+        instance.setPublicKeyBytes(value);
+        return this;
+      }
+
+      /**
+       * <code>bool isRemoteManage = 16;</code>
+       * @return The isRemoteManage.
+       */
+      @Override
+      public boolean getIsRemoteManage() {
+        return instance.getIsRemoteManage();
+      }
+      /**
+       * <code>bool isRemoteManage = 16;</code>
+       * @param value The isRemoteManage to set.
+       * @return This builder for chaining.
+       */
+      public Builder setIsRemoteManage(boolean value) {
+        copyOnWrite();
+        instance.setIsRemoteManage(value);
+        return this;
+      }
+      /**
+       * <code>bool isRemoteManage = 16;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearIsRemoteManage() {
+        copyOnWrite();
+        instance.clearIsRemoteManage();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:RegisterProtocol)
     }
     @Override
@@ -1398,7 +1572,7 @@ public final class ManagerProtocolBuf {
         Object arg0, Object arg1) {
       switch (method) {
         case NEW_MUTABLE_INSTANCE: {
-          return new RegisterProtocol();
+          return new org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol();
         }
         case NEW_BUILDER: {
           return new Builder();
@@ -1419,11 +1593,13 @@ public final class ManagerProtocolBuf {
               "remoteHost_",
               "remoteDataPort_",
               "remoteManagerPort_",
+              "publicKey_",
+              "isRemoteManage_",
             };
             String info =
-                "\u0000\u000e\u0000\u0000\u0001\u000e\u000e\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
+                "\u0000\u0010\u0000\u0000\u0001\u0010\u0010\u0000\u0000\u0000\u0001\u0208\u0002\u0208" +
                 "\u0003\u0004\u0004\u0007\u0005\u0007\u0006\u0208\u0007\u0208\b\u0208\t\u0208\n\u0208" +
-                "\u000b\u0004\f\u0208\r\u0004\u000e\u0004";
+                "\u000b\u0004\f\u0208\r\u0004\u000e\u0004\u000f\u0208\u0010\u0007";
             return newMessageInfo(DEFAULT_INSTANCE, info, objects);
         }
         // fall through
@@ -1433,7 +1609,7 @@ public final class ManagerProtocolBuf {
         case GET_PARSER: {
           com.google.protobuf.Parser<RegisterProtocol> parser = PARSER;
           if (parser == null) {
-            synchronized (RegisterProtocol.class) {
+            synchronized (org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol.class) {
               parser = PARSER;
               if (parser == null) {
                 parser =
@@ -1457,7 +1633,7 @@ public final class ManagerProtocolBuf {
 
 
     // @@protoc_insertion_point(class_scope:RegisterProtocol)
-    private static final RegisterProtocol DEFAULT_INSTANCE;
+    private static final org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol DEFAULT_INSTANCE;
     static {
       RegisterProtocol defaultInstance = new RegisterProtocol();
       // New instances are implicitly immutable so no need to make
@@ -1467,7 +1643,7 @@ public final class ManagerProtocolBuf {
         RegisterProtocol.class, defaultInstance);
     }
 
-    public static RegisterProtocol getDefaultInstance() {
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -1484,7 +1660,7 @@ public final class ManagerProtocolBuf {
 
     /**
      * <pre>
-     * 1-&gt;res, 2-&gt;new connection
+     * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
      * </pre>
      *
      * <code>int32 type = 1;</code>
@@ -1494,35 +1670,35 @@ public final class ManagerProtocolBuf {
 
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @return The channel.
+     * <code>string value = 2;</code>
+     * @return The value.
      */
-    String getChannel();
+    String getValue();
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @return The bytes for channel.
+     * <code>string value = 2;</code>
+     * @return The bytes for value.
      */
     com.google.protobuf.ByteString
-        getChannelBytes();
+        getValueBytes();
 
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @return The channelMd5.
+     * <code>string valueMd5 = 3;</code>
+     * @return The valueMd5.
      */
-    String getChannelMd5();
+    String getValueMd5();
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @return The bytes for channelMd5.
+     * <code>string valueMd5 = 3;</code>
+     * @return The bytes for valueMd5.
      */
     com.google.protobuf.ByteString
-        getChannelMd5Bytes();
+        getValueMd5Bytes();
   }
   /**
    * Protobuf type {@code ManagerResponse}
@@ -1533,14 +1709,14 @@ public final class ManagerProtocolBuf {
       // @@protoc_insertion_point(message_implements:ManagerResponse)
       ManagerResponseOrBuilder {
     private ManagerResponse() {
-      channel_ = "";
-      channelMd5_ = "";
+      value_ = "";
+      valueMd5_ = "";
     }
     public static final int TYPE_FIELD_NUMBER = 1;
     private int type_;
     /**
      * <pre>
-     * 1-&gt;res, 2-&gt;new connection
+     * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
      * </pre>
      *
      * <code>int32 type = 1;</code>
@@ -1552,7 +1728,7 @@ public final class ManagerProtocolBuf {
     }
     /**
      * <pre>
-     * 1-&gt;res, 2-&gt;new connection
+     * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
      * </pre>
      *
      * <code>int32 type = 1;</code>
@@ -1564,7 +1740,7 @@ public final class ManagerProtocolBuf {
     }
     /**
      * <pre>
-     * 1-&gt;res, 2-&gt;new connection
+     * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
      * </pre>
      *
      * <code>int32 type = 1;</code>
@@ -1574,197 +1750,197 @@ public final class ManagerProtocolBuf {
       type_ = 0;
     }
 
-    public static final int CHANNEL_FIELD_NUMBER = 2;
-    private String channel_;
+    public static final int VALUE_FIELD_NUMBER = 2;
+    private String value_;
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @return The channel.
+     * <code>string value = 2;</code>
+     * @return The value.
      */
     @Override
-    public String getChannel() {
-      return channel_;
+    public String getValue() {
+      return value_;
     }
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @return The bytes for channel.
+     * <code>string value = 2;</code>
+     * @return The bytes for value.
      */
     @Override
     public com.google.protobuf.ByteString
-        getChannelBytes() {
-      return com.google.protobuf.ByteString.copyFromUtf8(channel_);
+        getValueBytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(value_);
     }
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @param value The channel to set.
+     * <code>string value = 2;</code>
+     * @param value The value to set.
      */
-    private void setChannel(
+    private void setValue(
         String value) {
       if (value == null) {
     throw new NullPointerException();
   }
 
-      channel_ = value;
+      value_ = value;
     }
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
+     * <code>string value = 2;</code>
      */
-    private void clearChannel() {
+    private void clearValue() {
 
-      channel_ = getDefaultInstance().getChannel();
+      value_ = getDefaultInstance().getValue();
     }
     /**
      * <pre>
-     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+     * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
      * </pre>
      *
-     * <code>string channel = 2;</code>
-     * @param value The bytes for channel to set.
+     * <code>string value = 2;</code>
+     * @param value The bytes for value to set.
      */
-    private void setChannelBytes(
+    private void setValueBytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
 
-      channel_ = value.toStringUtf8();
+      value_ = value.toStringUtf8();
     }
 
-    public static final int CHANNELMD5_FIELD_NUMBER = 3;
-    private String channelMd5_;
+    public static final int VALUEMD5_FIELD_NUMBER = 3;
+    private String valueMd5_;
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @return The channelMd5.
+     * <code>string valueMd5 = 3;</code>
+     * @return The valueMd5.
      */
     @Override
-    public String getChannelMd5() {
-      return channelMd5_;
+    public String getValueMd5() {
+      return valueMd5_;
     }
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @return The bytes for channelMd5.
+     * <code>string valueMd5 = 3;</code>
+     * @return The bytes for valueMd5.
      */
     @Override
     public com.google.protobuf.ByteString
-        getChannelMd5Bytes() {
-      return com.google.protobuf.ByteString.copyFromUtf8(channelMd5_);
+        getValueMd5Bytes() {
+      return com.google.protobuf.ByteString.copyFromUtf8(valueMd5_);
     }
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @param value The channelMd5 to set.
+     * <code>string valueMd5 = 3;</code>
+     * @param value The valueMd5 to set.
      */
-    private void setChannelMd5(
+    private void setValueMd5(
         String value) {
       if (value == null) {
     throw new NullPointerException();
   }
 
-      channelMd5_ = value;
+      valueMd5_ = value;
     }
     /**
-     * <code>string channelMd5 = 3;</code>
+     * <code>string valueMd5 = 3;</code>
      */
-    private void clearChannelMd5() {
+    private void clearValueMd5() {
 
-      channelMd5_ = getDefaultInstance().getChannelMd5();
+      valueMd5_ = getDefaultInstance().getValueMd5();
     }
     /**
-     * <code>string channelMd5 = 3;</code>
-     * @param value The bytes for channelMd5 to set.
+     * <code>string valueMd5 = 3;</code>
+     * @param value The bytes for valueMd5 to set.
      */
-    private void setChannelMd5Bytes(
+    private void setValueMd5Bytes(
         com.google.protobuf.ByteString value) {
       if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
 
-      channelMd5_ = value.toStringUtf8();
+      valueMd5_ = value.toStringUtf8();
     }
 
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static ManagerResponse parseFrom(byte[] data)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, data, extensionRegistry);
     }
-    public static ManagerResponse parseFrom(java.io.InputStream input)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input, extensionRegistry);
     }
-    public static ManagerResponse parseDelimitedFrom(java.io.InputStream input)
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return parseDelimitedFrom(DEFAULT_INSTANCE, input);
     }
-    public static ManagerResponse parseDelimitedFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return parseDelimitedFrom(DEFAULT_INSTANCE, input, extensionRegistry);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageLite.parseFrom(
           DEFAULT_INSTANCE, input);
     }
-    public static ManagerResponse parseFrom(
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1775,7 +1951,7 @@ public final class ManagerProtocolBuf {
     public static Builder newBuilder() {
       return (Builder) DEFAULT_INSTANCE.createBuilder();
     }
-    public static Builder newBuilder(ManagerResponse prototype) {
+    public static Builder newBuilder(org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse prototype) {
       return (Builder) DEFAULT_INSTANCE.createBuilder(prototype);
     }
 
@@ -1786,7 +1962,7 @@ public final class ManagerProtocolBuf {
         com.google.protobuf.GeneratedMessageLite.Builder<
           ManagerResponse, Builder> implements
         // @@protoc_insertion_point(builder_implements:ManagerResponse)
-        ManagerResponseOrBuilder {
+        org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponseOrBuilder {
       // Construct using org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse.newBuilder()
       private Builder() {
         super(DEFAULT_INSTANCE);
@@ -1795,7 +1971,7 @@ public final class ManagerProtocolBuf {
 
       /**
        * <pre>
-       * 1-&gt;res, 2-&gt;new connection
+       * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
        * </pre>
        *
        * <code>int32 type = 1;</code>
@@ -1807,7 +1983,7 @@ public final class ManagerProtocolBuf {
       }
       /**
        * <pre>
-       * 1-&gt;res, 2-&gt;new connection
+       * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
        * </pre>
        *
        * <code>int32 type = 1;</code>
@@ -1821,7 +1997,7 @@ public final class ManagerProtocolBuf {
       }
       /**
        * <pre>
-       * 1-&gt;res, 2-&gt;new connection
+       * 1-&gt;res, 2-&gt;new connection, 3-&gt; new config
        * </pre>
        *
        * <code>int32 type = 1;</code>
@@ -1835,119 +2011,119 @@ public final class ManagerProtocolBuf {
 
       /**
        * <pre>
-       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
        * </pre>
        *
-       * <code>string channel = 2;</code>
-       * @return The channel.
+       * <code>string value = 2;</code>
+       * @return The value.
        */
       @Override
-      public String getChannel() {
-        return instance.getChannel();
+      public String getValue() {
+        return instance.getValue();
       }
       /**
        * <pre>
-       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
        * </pre>
        *
-       * <code>string channel = 2;</code>
-       * @return The bytes for channel.
+       * <code>string value = 2;</code>
+       * @return The bytes for value.
        */
       @Override
       public com.google.protobuf.ByteString
-          getChannelBytes() {
-        return instance.getChannelBytes();
+          getValueBytes() {
+        return instance.getValueBytes();
       }
       /**
        * <pre>
-       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
        * </pre>
        *
-       * <code>string channel = 2;</code>
-       * @param value The channel to set.
+       * <code>string value = 2;</code>
+       * @param value The value to set.
        * @return This builder for chaining.
        */
-      public Builder setChannel(
+      public Builder setValue(
           String value) {
         copyOnWrite();
-        instance.setChannel(value);
+        instance.setValue(value);
         return this;
       }
       /**
        * <pre>
-       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
        * </pre>
        *
-       * <code>string channel = 2;</code>
+       * <code>string value = 2;</code>
        * @return This builder for chaining.
        */
-      public Builder clearChannel() {
+      public Builder clearValue() {
         copyOnWrite();
-        instance.clearChannel();
+        instance.clearValue();
         return this;
       }
       /**
        * <pre>
-       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server
+       * type=1 -&gt; 如果加密的话，是密码; type=2 -&gt; channel uuid,建立连接的时候用来告诉server; type = 3 -&gt; remote_proxy_port, local_host, local_port
        * </pre>
        *
-       * <code>string channel = 2;</code>
-       * @param value The bytes for channel to set.
+       * <code>string value = 2;</code>
+       * @param value The bytes for value to set.
        * @return This builder for chaining.
        */
-      public Builder setChannelBytes(
+      public Builder setValueBytes(
           com.google.protobuf.ByteString value) {
         copyOnWrite();
-        instance.setChannelBytes(value);
+        instance.setValueBytes(value);
         return this;
       }
 
       /**
-       * <code>string channelMd5 = 3;</code>
-       * @return The channelMd5.
+       * <code>string valueMd5 = 3;</code>
+       * @return The valueMd5.
        */
       @Override
-      public String getChannelMd5() {
-        return instance.getChannelMd5();
+      public String getValueMd5() {
+        return instance.getValueMd5();
       }
       /**
-       * <code>string channelMd5 = 3;</code>
-       * @return The bytes for channelMd5.
+       * <code>string valueMd5 = 3;</code>
+       * @return The bytes for valueMd5.
        */
       @Override
       public com.google.protobuf.ByteString
-          getChannelMd5Bytes() {
-        return instance.getChannelMd5Bytes();
+          getValueMd5Bytes() {
+        return instance.getValueMd5Bytes();
       }
       /**
-       * <code>string channelMd5 = 3;</code>
-       * @param value The channelMd5 to set.
+       * <code>string valueMd5 = 3;</code>
+       * @param value The valueMd5 to set.
        * @return This builder for chaining.
        */
-      public Builder setChannelMd5(
+      public Builder setValueMd5(
           String value) {
         copyOnWrite();
-        instance.setChannelMd5(value);
+        instance.setValueMd5(value);
         return this;
       }
       /**
-       * <code>string channelMd5 = 3;</code>
+       * <code>string valueMd5 = 3;</code>
        * @return This builder for chaining.
        */
-      public Builder clearChannelMd5() {
+      public Builder clearValueMd5() {
         copyOnWrite();
-        instance.clearChannelMd5();
+        instance.clearValueMd5();
         return this;
       }
       /**
-       * <code>string channelMd5 = 3;</code>
-       * @param value The bytes for channelMd5 to set.
+       * <code>string valueMd5 = 3;</code>
+       * @param value The bytes for valueMd5 to set.
        * @return This builder for chaining.
        */
-      public Builder setChannelMd5Bytes(
+      public Builder setValueMd5Bytes(
           com.google.protobuf.ByteString value) {
         copyOnWrite();
-        instance.setChannelMd5Bytes(value);
+        instance.setValueMd5Bytes(value);
         return this;
       }
 
@@ -1960,7 +2136,7 @@ public final class ManagerProtocolBuf {
         Object arg0, Object arg1) {
       switch (method) {
         case NEW_MUTABLE_INSTANCE: {
-          return new ManagerResponse();
+          return new org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse();
         }
         case NEW_BUILDER: {
           return new Builder();
@@ -1968,8 +2144,8 @@ public final class ManagerProtocolBuf {
         case BUILD_MESSAGE_INFO: {
             Object[] objects = new Object[] {
               "type_",
-              "channel_",
-              "channelMd5_",
+              "value_",
+              "valueMd5_",
             };
             String info =
                 "\u0000\u0003\u0000\u0000\u0001\u0003\u0003\u0000\u0000\u0000\u0001\u0004\u0002\u0208" +
@@ -1983,7 +2159,7 @@ public final class ManagerProtocolBuf {
         case GET_PARSER: {
           com.google.protobuf.Parser<ManagerResponse> parser = PARSER;
           if (parser == null) {
-            synchronized (ManagerResponse.class) {
+            synchronized (org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse.class) {
               parser = PARSER;
               if (parser == null) {
                 parser =
@@ -2007,7 +2183,7 @@ public final class ManagerProtocolBuf {
 
 
     // @@protoc_insertion_point(class_scope:ManagerResponse)
-    private static final ManagerResponse DEFAULT_INSTANCE;
+    private static final org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse DEFAULT_INSTANCE;
     static {
       ManagerResponse defaultInstance = new ManagerResponse();
       // New instances are implicitly immutable so no need to make
@@ -2017,7 +2193,7 @@ public final class ManagerProtocolBuf {
         ManagerResponse.class, defaultInstance);
     }
 
-    public static ManagerResponse getDefaultInstance() {
+    public static org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 

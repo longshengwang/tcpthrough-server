@@ -1,29 +1,37 @@
 package org.wls.tcpthrough.manager;
 
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.wls.tcpthrough.Tools;
 import org.wls.tcpthrough.model.GlobalObject;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol;
 import org.wls.tcpthrough.model.ResponseType;
 import org.wls.tcpthrough.outer.OuterServer;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol> {
-    private static final Logger LOGGER = LogManager.getLogger(ManagerHandler.class);
+    private static final Logger LOG = LogManager.getLogger(ManagerHandler.class);
+
+    public static final int REGISTER_TIMEOUT = 1;
 
 
-    public ManagerHandler(GlobalObject globalObject){
+    public ManagerHandler(GlobalObject globalObject) {
         this.globalObject = globalObject;
     }
 
     private GlobalObject globalObject;
+
+    // use to save register info
     private RegisterProtocol registerProtocol = null;
 
 
-//    /*
+    //    /*
 //        [读]
 //        注册协议   protocol code  1个字
 //                  length         4个字节
@@ -43,73 +51,77 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
 //     */
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, RegisterProtocol msg) throws Exception {
-        LOGGER.info("Server channelRead0");
-        registerProtocol = RegisterProtocol.newBuilder(msg).build();
-
-        OuterServer outerServer = new OuterServer(registerProtocol, ctx.channel(), globalObject);
+        LOG.info("Manage Client send register protocol to server." + Tools.protocolToString(msg));
+        OuterServer outerServer;
+        if (registerProtocol == null) {
+            registerProtocol = RegisterProtocol.newBuilder(msg).build();
+            if (globalObject.registerName(registerProtocol.getName())) {
+                outerServer = new OuterServer(registerProtocol, ctx.channel(), globalObject);
+            } else {
+                LOG.warn("Name : " + registerProtocol.getName() + " has been used by other");
+                ManagerResponse response = ManagerResponse
+                        .newBuilder()
+                        .setType(ResponseType.REGISTER_FAIL.get())
+                        .setValue("NAME_HAS_BEEN_USED")
+                        .build();
+                ctx.channel().writeAndFlush(response);
+                return;
+            }
+        } else {
+            RegisterProtocol newestRp = RegisterProtocol.newBuilder(msg).build();
+            outerServer = new OuterServer(newestRp, ctx.channel(), globalObject);
+        }
         new Thread(outerServer).start();
         globalObject.putChannelOuterServer(ctx.channel(), outerServer);
 
         ManagerResponse response = ManagerResponse
                 .newBuilder()
                 .setType(ResponseType.REGISTER_RESPONSE.get())
-//                .setChannel()
                 .build();
 
-        ctx.channel().writeAndFlush(response).addListener(new ChannelFutureListener() {
-            @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
-                if(future.isSuccess()){
-                    System.out.println("===》Server回复注册成功！");
-                } else {
-                    System.out.println("===> server回复注册失败");
-                }
+        ctx.channel().writeAndFlush(response).addListener((ChannelFuture future) -> {
+            if (future.isSuccess()) {
+                LOG.debug("Reply register success");
+            } else {
+                LOG.error("Reply register fail");
             }
         });
-        LOGGER.info("Server channelRead0 finish");
-
-//        ctx.close();
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        LOGGER.info("Server channel active");
-//        super.channelActive(ctx);
-//        ManagerProtocolBuf.ManagerResponse response = ManagerProtocolBuf.ManagerResponse.newBuilder()
-//                .setUserName("zhihao.miao").setAge(27).setPassword("123456").build();
-//        ctx.channel().writeAndFlush(user);
-
-        ctx.executor().schedule(new ProtocolValidate(this, ctx), 1, TimeUnit.SECONDS);
-//        ctx.channel().read()
+        LOG.info("One Channel is try to connect manager server");
+        ctx.executor().schedule(new ProtocolValidate(this, ctx), REGISTER_TIMEOUT, TimeUnit.SECONDS);
     }
 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        System.out.println("Server exceptionCaught");
-        cause.printStackTrace();
-        OuterServer outerServer = globalObject.getChannelOuterServer(ctx.channel());
-        if (outerServer != null) {
-            outerServer.channelFuture.channel().close();
-            globalObject.deleteChannelOuterServer(ctx.channel());
+        LOG.error("ManagerHander exceptionCaught:", cause);
+        List<OuterServer> outerServerList = globalObject.getChannelOuterServer(ctx.channel());
+        if (outerServerList != null) {
+            outerServerList.forEach(outerServer -> outerServer.channelFuture.channel().close());
+            globalObject.deleteChannelOuterServerList(ctx.channel());
         }
         ctx.channel().close();
-    }
-
-
-    public boolean isRegisterOK() {
-        return registerProtocol != null;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        LOGGER.info("Server channelInactive");
-        OuterServer outerServer = globalObject.getChannelOuterServer(ctx.channel());
-        if (outerServer != null) {
-            outerServer.channelFuture.channel().close();
-            globalObject.deleteChannelOuterServer(ctx.channel());
+        LOG.info("One manage channel is Inactive. Remote channel is " + ctx.channel().remoteAddress());
+        List<OuterServer> outerServerList = globalObject.getChannelOuterServer(ctx.channel());
+        if (outerServerList != null) {
+            outerServerList.forEach(outerServer -> {
+                LOG.info(outerServer.getDescription() + "which is closing");
+                outerServer.channelFuture.channel().close();
+            });
+            globalObject.deleteChannelOuterServerList(ctx.channel());
         }
         ctx.channel().close();
+    }
+
+    public boolean isRegisterOK() {
+        return registerProtocol != null;
     }
 }
 

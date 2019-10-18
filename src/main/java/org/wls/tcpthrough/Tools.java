@@ -1,5 +1,7 @@
 package org.wls.tcpthrough;
 
+import org.wls.tcpthrough.model.ManagerProtocolBuf;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.UUID;
@@ -23,8 +25,22 @@ public class Tools {
         return String.valueOf(UUID.randomUUID());
     }
 
-    public static void main(String[] args) {
-        System.out.println(Tools.uuid());
+
+    public static String protocolToString(ManagerProtocolBuf.RegisterProtocol registerProtocol){
+        StringBuilder builder = new StringBuilder();
+        builder.append("\nRegisterProtocol:\n")
+                .append("    RemoteProxyPort : "  + registerProtocol.getRemoteProxyPort() + "\n")
+                .append("    Name : "  + registerProtocol.getName() + "\n")
+                .append("    LocalHost : " + registerProtocol.getLocalHost() + "\n")
+                .append("    LocalPort : " + registerProtocol.getLocalPort() + "\n")
+                .append("    IsRemoteManage : " + registerProtocol.getIsRemoteManage() + "\n")
+                .append("    IsAuth : " + registerProtocol.getIsAuth() + "\n")
+                .append("    IsEncrypt : " + registerProtocol.getIsEncrypt());
+        return builder.toString();
+
     }
+
+//    public static void main(String[] args) {
+//    }
 
 }

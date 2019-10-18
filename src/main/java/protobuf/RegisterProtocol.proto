@@ -1,11 +1,12 @@
 syntax = "proto3";
 
-//package org.wls.tcpthrough.model;
+package org.wls.tcpthrough.model;
 
 //optimize_for 加快解析的速度
 option optimize_for = SPEED;
 option java_package = "org.wls.tcpthrough.model";
 option java_outer_classname="ManagerProtocolBuf";
+
 
 message RegisterProtocol{
     string name = 1;
@@ -22,10 +23,14 @@ message RegisterProtocol{
     string remoteHost = 12;
     int32 remoteDataPort = 13;
     int32 remoteManagerPort = 14;
+    string publicKey = 15;
+    bool isRemoteManage = 16;
 }
 
 message ManagerResponse{
-    int32 type = 1; // 1->res, 2->new connection
-    string channel = 2; // type=1 -> 如果加密的话，是密码; type=2 -> channel uuid,建立连接的时候用来告诉server
-    string channelMd5 = 3;
+    // 1->res, 2->new connection, 3-> new config
+    int32 type = 1;
+    // type=1 -> 如果加密的话，是密码; type=2 -> channel uuid,建立连接的时候用来告诉server; type = 3 -> remote_proxy_port, local_host, local_port
+    string value = 2;
+    string valueMd5 = 3;
 }
