@@ -84,7 +84,7 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
             }
 
             //check if the name is registered
-            if (globalObject.registerName(registerProtocol.getName())) {
+            if (globalObject.registerName(registerProtocol.getName(), ctx.channel())) {
                 outerServer = new OuterServer(registerProtocol, ctx.channel(), globalObject);
             } else {
                 LOG.warn("Name : " + registerProtocol.getName() + " has been used by other");

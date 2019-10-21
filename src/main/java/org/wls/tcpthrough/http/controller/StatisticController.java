@@ -43,19 +43,19 @@ public class StatisticController extends BaseController {
         for (List<OuterServer> outerServers : globalObject.getAllOuterServers()) {
             for (OuterServer outerServer : outerServers) {
                 TrafficCounter trafficCounter = outerServer.gtsh.trafficCounter();
-                Map<String ,String> map = new HashMap<>();
+                Map<String, String> map = new HashMap<>();
                 ManagerProtocolBuf.RegisterProtocol registerProtocol = outerServer.getRegisterProtocol();
                 map.put("name", registerProtocol.getName());
                 map.put("proxy_port", registerProtocol.getRemoteProxyPort() + "");
-                map.put("local", registerProtocol.getLocalHost()+":" + registerProtocol.getLocalPort());
+                map.put("local", registerProtocol.getLocalHost() + ":" + registerProtocol.getLocalPort());
                 map.put("is_remote_manage", registerProtocol.getIsRemoteManage() + "");
                 map.put("read_speed", (trafficCounter.lastReadThroughput() >> 10) + "KB/s");
                 map.put("write_speed", (trafficCounter.lastWriteThroughput() >> 10) + "KB/s");
 
                 AtomicInteger connection_count = new AtomicInteger();
                 list.forEach(connectModel -> {
-                    if(connectModel.getOuterHandler().getRegisterProtocol().getName().equals(registerProtocol.getName())
-                            && connectModel.getOuterHandler().getRegisterProtocol().getRemoteProxyPort() == registerProtocol.getRemoteProxyPort()){
+                    if (connectModel.getOuterHandler().getRegisterProtocol().getName().equals(registerProtocol.getName())
+                            && connectModel.getOuterHandler().getRegisterProtocol().getRemoteProxyPort() == registerProtocol.getRemoteProxyPort()) {
                         connection_count.addAndGet(1);
                     }
                 });
@@ -70,10 +70,10 @@ public class StatisticController extends BaseController {
     /**
      * 测试POST请求
      * {
-     *     name: xxxx,
-     *     proxy_port: 080,
-     *     local_host: localhost,
-     *     local_port: 22
+     * name: xxxx,
+     * proxy_port: 080,
+     * local_host: localhost,
+     * local_port: 22
      * }
      *
      * @param json json
@@ -82,19 +82,29 @@ public class StatisticController extends BaseController {
     @RouterMapping(api = "/statistic/register/add", method = "POST")
     public boolean addRegister(@JsonParam("json") JSONObject json) {
         LOG.info("[ HTTP Server Request] Add register. \n" + json.toJSONString());
-        String name = (String)json.get("name");
-        String proxy_port = (String)json.get("proxy_port");
-        String local_host = (String)json.get("local_host");
-        String local_port = (String)json.get("local_port");
-        if(proxy_port == null || local_host == null || local_port == null || name == null){
+        String name = json.getString("name");
+        String proxy_port = json.getString("proxy_port");
+        String local_host = json.getString("local_host");
+        String local_port = json.getString("local_port");
+        if (proxy_port == null || local_host == null || local_port == null || name == null) {
             LOG.warn("Some data is empty");
             return false;
         }
         try {
             Integer.parseInt(proxy_port);
             Integer.parseInt(local_port);
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.warn("Data Format is not correct");
+            return false;
+        }
+
+
+        List<Integer> openedPorts = new ArrayList<>();
+        for (List<OuterServer> outerServers : globalObject.getAllOuterServers()) {
+            outerServers.forEach(outerServer -> openedPorts.add(outerServer.getRegisterProtocol().getRemoteProxyPort()));
+        }
+        if (openedPorts.indexOf(Integer.parseInt(proxy_port)) != -1) {
+            LOG.error("The proxy port( " + proxy_port + " ) has been used");
             return false;
         }
 
@@ -107,31 +117,27 @@ public class StatisticController extends BaseController {
                 .build();
 
         boolean hasSend = false;
-        for (List<OuterServer> outerServers : globalObject.getAllOuterServers()) {
-            if(outerServers.size() > 0){
-                OuterServer outerServer = outerServers.get(0);
-                if(outerServer.getRegisterProtocol().getName().equals(name)){
-                    outerServer.getManagerChannel().writeAndFlush(response);
-                    hasSend = true;
-                    break;
-                }
-            }
+        if (globalObject.getManageChannelByName(name) != null) {
+            globalObject.getManageChannelByName(name).writeAndFlush(response);
+            hasSend = true;
+        } else {
+            LOG.warn("The channel of the name( " + name + " ) cannot be found!");
         }
         return hasSend;
     }
 
     @RouterMapping(api = "/statistic/register/delete", method = "POST")
     public boolean deleteRegister(@JsonParam("json") JSONObject json) {
-        LOG.info("[ HTTP Server Request] Add register. \n" + json.toJSONString());
-        String name = (String)json.get("name");
-        String proxy_port = (String)json.get("proxy_port");
-        if(proxy_port == null || name == null ){
+        LOG.info("[ HTTP Server Request] Remove register. \n" + json.toJSONString());
+        String name = (String) json.get("name");
+        String proxy_port = (String) json.get("proxy_port");
+        if (proxy_port == null || name == null) {
             LOG.warn("Some data is empty");
             return false;
         }
         try {
             Integer.parseInt(proxy_port);
-        } catch (Exception e){
+        } catch (Exception e) {
             LOG.warn("Data Format is not correct");
             return false;
         }
@@ -142,18 +148,31 @@ public class StatisticController extends BaseController {
                 .setValueMd5(Tools.getMD5(newRegisterStr))
                 .build();
 
-        try{
-            globalObject.getChannelOutServerMapping().forEach((channel, outerServers) -> {
-                outerServers.forEach(outerServer -> {
-                    if(outerServer.getRegisterProtocol().getName().equals(name)
-                            && outerServer.getRegisterProtocol().getRemoteProxyPort() == Integer.parseInt(proxy_port)){
+        try {
+            if (globalObject.getManageChannelByName(name) != null) {
+                List<OuterServer> outerServers = globalObject.getChannelOuterServer(globalObject.getManageChannelByName(name));
+                OuterServer outerServer = outerServers.stream()
+                        .filter(o -> o.getRegisterProtocol().getRemoteProxyPort() == Integer.parseInt(proxy_port))
+                        .findFirst()
+                        .orElse(null);
+                if(outerServer != null){
+                    if(!outerServer.getRegisterProtocol().getIsRemoteManage()){
+                        LOG.warn("The client (name : " + name +") is not allow to remote manage!");
+                        return false;
+                    } else {
+                        globalObject.getManageChannelByName(name).writeAndFlush(response);
                         outerServer.channelFuture.channel().close();
-
                     }
-                });
-            });
-        } catch (Exception e){
-            e.printStackTrace();
+                } else {
+                    LOG.warn("The outserver is not exist!");
+                }
+            } else {
+                LOG.warn("The client name(" + name+") is not exist!");
+            }
+
+        } catch (Exception e) {
+            LOG.error("", e);
+            return false;
         }
         return true;
     }

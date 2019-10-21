@@ -3,10 +3,7 @@ package org.wls.tcpthrough.model;
 import io.netty.channel.Channel;
 import org.wls.tcpthrough.outer.OuterServer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
@@ -32,28 +29,32 @@ public class GlobalObject {
     // channle is the manage channel
     private Map<Channel, List<OuterServer>> channelMapping;
 
-    private List<String> clientNames;
+    private Map<String, Channel> clientNames;
     private Lock nameLock = new ReentrantLock();
 
 
     public GlobalObject() {
         outConnectionMap = new ConcurrentHashMap<>();
         channelMapping = new ConcurrentHashMap<>();
-        clientNames = new ArrayList<>();
+        clientNames = new ConcurrentHashMap<>();
     }
 
-    public boolean registerName(String name){
+    public boolean registerName(String name, Channel channel){
         nameLock.lock();
         try{
-            if(clientNames.contains(name)){
+            if(clientNames.containsKey(name)){
                 return false;
             } else {
-                clientNames.add(name);
+                clientNames.put(name, channel);
                 return true;
             }
         } finally {
             nameLock.unlock();
         }
+    }
+
+    public Channel getManageChannelByName(String name){
+        return clientNames.get(name);
     }
 
     public void removeName(String name){

@@ -83,7 +83,11 @@ public class OuterServer implements Runnable{
             managerChannel.writeAndFlush(response);
         } finally {
             globalObject.deleteChannelSingleOuterServer(managerChannel, this);
-            globalObject.removeName(registerProtocol.getName());
+            /*
+            one name has multiple out server.
+            So only remove the channel when the manage channel is inactive
+            */
+            // globalObject.removeName(registerProtocol.getName());
 
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
