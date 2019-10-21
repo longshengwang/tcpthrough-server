@@ -53,8 +53,37 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
     protected void channelRead0(ChannelHandlerContext ctx, RegisterProtocol msg) throws Exception {
         LOG.info("Manage Client send register protocol to server." + Tools.protocolToString(msg));
         OuterServer outerServer;
+        // if is null, mean the first register
         if (registerProtocol == null) {
             registerProtocol = RegisterProtocol.newBuilder(msg).build();
+
+            //valid the protocol
+            if (!Tools.isProtocolValid(registerProtocol)) {
+                LOG.warn("Register protocol is not valid!");
+                ManagerResponse response = ManagerResponse
+                        .newBuilder()
+                        .setType(ResponseType.REGISTER_FAIL.get())
+                        .setValue("REGISTER_PROTOCOL_NOT_VALID")
+                        .build();
+                ctx.channel().writeAndFlush(response);
+                registerProtocol = null;
+                return;
+            }
+
+            //if server has security key, check the client password is correct or not.
+            if(globalObject.getSecurityKey() != null && !globalObject.getSecurityKey().equals(registerProtocol.getPassword())){
+                LOG.warn("Register protocol password is not correct!");
+                ManagerResponse response = ManagerResponse
+                        .newBuilder()
+                        .setType(ResponseType.REGISTER_FAIL.get())
+                        .setValue("REGISTER_PROTOCOL_PASSWORD_NOT_CORRECT")
+                        .build();
+                ctx.channel().writeAndFlush(response);
+                registerProtocol = null;
+                return;
+            }
+
+            //check if the name is registered
             if (globalObject.registerName(registerProtocol.getName())) {
                 outerServer = new OuterServer(registerProtocol, ctx.channel(), globalObject);
             } else {
@@ -62,12 +91,14 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
                 ManagerResponse response = ManagerResponse
                         .newBuilder()
                         .setType(ResponseType.REGISTER_FAIL.get())
-                        .setValue("NAME_HAS_BEEN_USED")
+                        .setValue("NAME_HAS_BEEN_USED:" + registerProtocol.getName())
                         .build();
                 ctx.channel().writeAndFlush(response);
+                registerProtocol = null;
                 return;
             }
         } else {
+            // not the first register
             RegisterProtocol newestRp = RegisterProtocol.newBuilder(msg).build();
             outerServer = new OuterServer(newestRp, ctx.channel(), globalObject);
         }
@@ -98,6 +129,7 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         LOG.error("ManagerHander exceptionCaught:", cause);
+
         List<OuterServer> outerServerList = globalObject.getChannelOuterServer(ctx.channel());
         if (outerServerList != null) {
             outerServerList.forEach(outerServer -> outerServer.channelFuture.channel().close());
@@ -112,12 +144,16 @@ public class ManagerHandler extends SimpleChannelInboundHandler<RegisterProtocol
         List<OuterServer> outerServerList = globalObject.getChannelOuterServer(ctx.channel());
         if (outerServerList != null) {
             outerServerList.forEach(outerServer -> {
-                LOG.info(outerServer.getDescription() + "which is closing");
+                LOG.info("Outer Server is closing : " + outerServer.getDescription());
                 outerServer.channelFuture.channel().close();
             });
             globalObject.deleteChannelOuterServerList(ctx.channel());
         }
         ctx.channel().close();
+
+        if (registerProtocol != null) {
+            globalObject.removeName(registerProtocol.getName());
+        }
     }
 
     public boolean isRegisterOK() {

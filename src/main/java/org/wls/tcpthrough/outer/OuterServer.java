@@ -59,11 +59,11 @@ public class OuterServer implements Runnable{
                     if(future.isSuccess()){
                         LOG.info("Proxy Server run successfully. Proxy Port:" + registerProtocol.getRemoteProxyPort());
                     } else {
-                        LOG.info("Proxy Server run failed. Proxy Port:" + registerProtocol.getRemoteProxyPort());
+                        LOG.error("Proxy Server run failed. Proxy Port:" + registerProtocol.getRemoteProxyPort());
                         ManagerProtocolBuf.ManagerResponse response = ManagerProtocolBuf.ManagerResponse
                                 .newBuilder()
                                 .setType(ResponseType.REGISTER_FAIL.get())
-                                .setValue("PORT_IS_ALREADY_USED")
+                                .setValue("PORT_IS_ALREADY_USED:" + registerProtocol.getRemoteProxyPort())
                                 .build();
                         managerChannel.writeAndFlush(response);
                     }
@@ -72,8 +72,19 @@ public class OuterServer implements Runnable{
 
 
             channelFuture.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LOG.error("", e);
+            LOG.error("Proxy Server run failed. Proxy Port:" + registerProtocol.getRemoteProxyPort());
+            ManagerProtocolBuf.ManagerResponse response = ManagerProtocolBuf.ManagerResponse
+                    .newBuilder()
+                    .setType(ResponseType.REGISTER_FAIL.get())
+                    .setValue("PORT_IS_ALREADY_USED:" + registerProtocol.getRemoteProxyPort())
+                    .build();
+            managerChannel.writeAndFlush(response);
+
+            globalObject.deleteChannelSingleOuterServer(managerChannel, this);
+            globalObject.removeName(registerProtocol.getName());
+
         } finally {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
@@ -96,5 +107,9 @@ public class OuterServer implements Runnable{
                 .append("    is auth : " + registerProtocol.getIsAuth())
                 .append("\n");
         return builder.toString();
+    }
+
+    public Channel getManagerChannel() {
+        return managerChannel;
     }
 }

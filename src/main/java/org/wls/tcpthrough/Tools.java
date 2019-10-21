@@ -10,13 +10,14 @@ import java.util.UUID;
  * Created by wls on 2019/10/16.
  */
 public class Tools {
-    public static String getMD5(String str) throws Exception{
+    public static String getMD5(String str){
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.update(str.getBytes());
             return new BigInteger(1, md.digest()).toString(16);
         } catch (Exception e) {
-            throw e;
+//            throw e;
+            return null;
         }
     }
 
@@ -40,6 +41,20 @@ public class Tools {
 
     }
 
+
+    public static boolean isProtocolValid(ManagerProtocolBuf.RegisterProtocol registerProtocol){
+
+        if( registerProtocol.getName() != null && !registerProtocol.getName().equals("")
+                && registerProtocol.getRemoteHost()!= null && !registerProtocol.getRemoteHost().equals("")
+                && registerProtocol.getLocalHost()!= null && !registerProtocol.getLocalHost().equals("")
+                && registerProtocol.getRemoteManagerPort()!= -1
+                && registerProtocol.getRemoteProxyPort()!= -1
+                && registerProtocol.getRemoteDataPort()!= -1
+                && registerProtocol.getLocalPort()!= -1){
+            return true;
+        }
+        return false;
+    }
 //    public static void main(String[] args) {
 //    }
 

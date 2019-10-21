@@ -14,6 +14,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class GlobalObject {
 
+    private String securityKey;
+
+    public String getSecurityKey() {
+        return securityKey;
+    }
+
+    public void setSecurityKey(String securityKey) {
+        this.securityKey = securityKey;
+    }
+
     //the map is used to find ConnectModel for channel id
     private Map<String, ConnectModel> outConnectionMap;
 
@@ -80,11 +90,15 @@ public class GlobalObject {
             channelMapping.put(channel, new ArrayList<OuterServer>());
         }
         channelMapping.get(channel).add(outerServer);
-
     }
 
     public List<OuterServer> getChannelOuterServer(Channel channel) {
         return channelMapping.get(channel);
+    }
+
+
+    public List<List<OuterServer>> getAllOuterServers(){
+        return new ArrayList<>(channelMapping.values());
     }
 
     public void deleteChannelOuterServerList(Channel channel) {
@@ -95,7 +109,7 @@ public class GlobalObject {
 
     public void deleteChannelSingleOuterServer(Channel channel, OuterServer outerServer) {
         if (channelMapping.containsKey(channel)) {
-            channelMapping.get(channel).removeIf(os -> os.getRegisterProtocol().getRemoteProxyPort() == outerServer.getRegisterProtocol().getRemoteProxyPort());
+            channelMapping.get(channel).removeIf(os -> os.getRegisterProtocol().getName().equals(outerServer.getRegisterProtocol().getName()));
         }
     }
 
