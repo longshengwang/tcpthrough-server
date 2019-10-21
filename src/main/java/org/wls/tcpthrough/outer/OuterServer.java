@@ -81,11 +81,10 @@ public class OuterServer implements Runnable{
                     .setValue("PORT_IS_ALREADY_USED:" + registerProtocol.getRemoteProxyPort())
                     .build();
             managerChannel.writeAndFlush(response);
-
+        } finally {
             globalObject.deleteChannelSingleOuterServer(managerChannel, this);
             globalObject.removeName(registerProtocol.getName());
 
-        } finally {
             workGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
             LOG.info("The proxy server is closed. Proxy port: " + registerProtocol.getRemoteProxyPort());

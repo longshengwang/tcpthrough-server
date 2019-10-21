@@ -101,6 +101,7 @@ public class GlobalObject {
         return new ArrayList<>(channelMapping.values());
     }
 
+
     public void deleteChannelOuterServerList(Channel channel) {
         if (channelMapping.containsKey(channel)) {
             channelMapping.remove(channel);
@@ -109,8 +110,12 @@ public class GlobalObject {
 
     public void deleteChannelSingleOuterServer(Channel channel, OuterServer outerServer) {
         if (channelMapping.containsKey(channel)) {
-            channelMapping.get(channel).removeIf(os -> os.getRegisterProtocol().getName().equals(outerServer.getRegisterProtocol().getName()));
+            channelMapping.get(channel).removeIf(os -> os.getRegisterProtocol().getRemoteProxyPort() == (outerServer.getRegisterProtocol().getRemoteProxyPort()));
         }
+    }
+
+    public Map<Channel, List<OuterServer>> getChannelOutServerMapping(){
+        return channelMapping;
     }
 
 
