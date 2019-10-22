@@ -50,6 +50,8 @@ bin/server
 
 ## 3. HTTP接口
 
+**注意**：HTTP服务目前运行在`127.0.0.1`上，所以如果该服务部署在公网上，用公网IP地址是无法访问的。如果想用公网访问，可以用nginx、haproxy等反向代理，不过目前http没有做用户验证，需要注意。
+
 #### 3.1. 获取所有client的信息
 
 1. 访问接口`GET http://localhost:8080/tcpth/list`
