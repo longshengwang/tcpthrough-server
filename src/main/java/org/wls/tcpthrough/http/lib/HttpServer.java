@@ -33,7 +33,7 @@ public class HttpServer {
 
     NioEventLoopGroup group;
 
-    public HttpServer(GlobalObject globalObject){
+    public HttpServer(GlobalObject globalObject) {
         this.globalObject = globalObject;
     }
 
@@ -63,7 +63,7 @@ public class HttpServer {
                     })
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childOption(ChannelOption.SO_KEEPALIVE, Boolean.TRUE);
-            ChannelFuture future = bootstrap.bind(port);
+            ChannelFuture future = bootstrap.bind("127.0.0.1", port);
             future.sync();
             log.info("Start app server at port:{}", port);
         } catch (Exception e) {
@@ -79,8 +79,8 @@ public class HttpServer {
         this.routers = routers;
     }
 
-    public void stopServer(){
-        if(group != null){
+    public void stopServer() {
+        if (group != null) {
             group.shutdownGracefully();
         }
     }
