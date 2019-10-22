@@ -18,6 +18,7 @@ public class TcpThroughServer {
     public static final int HTTP_DEFAULT_PORT = 8080;
     public static final int DATA_SERVER_DEFAULT_PORT = 9009;
     public static final int MANAGE_DEFAULT_PORT = 9000;
+    public static final String CMD_SYNTAX = "tcpthrough-server -m manage-port -d data-port -n http-port [-s security-key]";
     public Integer managerServerPort;
     public Integer dataServerPort;
     public Integer httpPort;
@@ -62,12 +63,12 @@ public class TcpThroughServer {
     }
 
     public static void main(String[] args) {
-        LOG.info("Tcp through server is starting");
+//        LOG.info("Tcp through server is starting");
         if (args.length != 0) {
             Options options = new Options();
-            options.addRequiredOption("m", "manage-port", true, "manage server port");
-            options.addRequiredOption("d", "data-port", true, "data server port");
-            options.addRequiredOption("n", "http-port", true, "http server port");
+            options.addOption("m", "manage-port", true, "Manage server port. Default is " + MANAGE_DEFAULT_PORT);
+            options.addOption("d", "data-port", true, "Data server port. Default is " + DATA_SERVER_DEFAULT_PORT);
+            options.addOption("n", "http-port", true, "http server port. Default is " + HTTP_DEFAULT_PORT);
             options.addOption("s", "security-key", true, "server security key (For client password)");
             options.addOption(Option.builder("h")
                     .longOpt("help")
@@ -81,10 +82,11 @@ public class TcpThroughServer {
             try {
                 cmd = parser.parse(options, args);
             } catch (ParseException e) {
+                e.printStackTrace();
                 return;
             }
             if (cmd.hasOption('h') || cmd.hasOption("--help")) {
-                formatter.printHelp("tcpthrough-server -m manage-port -d data-port -n http-port [-s security-key]", options, false);
+                formatter.printHelp(100, CMD_SYNTAX, null, options, null, false);
                 return;
             }
 
@@ -92,15 +94,35 @@ public class TcpThroughServer {
             String dataPort = cmd.getOptionValue("d");
             String httpPort = cmd.getOptionValue("n");
             String security = cmd.getOptionValue("s");
+
             try{
-                int mgmtPortNum = Integer.parseInt(managePort);
-                int dataPortNum = Integer.parseInt(dataPort);
-                int httpPortNum = Integer.parseInt(httpPort);
+                int mgmtPortNum;
+                if(managePort != null){
+                    mgmtPortNum = Integer.parseInt(managePort);
+                } else {
+                    mgmtPortNum = MANAGE_DEFAULT_PORT;
+                }
+
+
+                int dataPortNum;
+                if(dataPort != null){
+                    dataPortNum = Integer.parseInt(dataPort);
+                } else {
+                    dataPortNum = DATA_SERVER_DEFAULT_PORT;
+                }
+
+                int httpPortNum;
+                if(httpPort != null){
+                    httpPortNum = Integer.parseInt(httpPort);
+                } else {
+                    httpPortNum = HTTP_DEFAULT_PORT;
+                }
+
                 TcpThroughServer tcpThroughServer = new TcpThroughServer(mgmtPortNum, dataPortNum, httpPortNum, security);
                 tcpThroughServer.run();
             }catch (Exception e){
                 System.out.println("The input is not valid");
-                formatter.printHelp("tcpthrough-server -m manage-port -d data-port -n http-port [-s security-key]", options, false);
+                formatter.printHelp(100, CMD_SYNTAX, null, options, null, false);
             }
         } else {
             TcpThroughServer tcpThroughServer = new TcpThroughServer(MANAGE_DEFAULT_PORT, DATA_SERVER_DEFAULT_PORT, HTTP_DEFAULT_PORT, null);

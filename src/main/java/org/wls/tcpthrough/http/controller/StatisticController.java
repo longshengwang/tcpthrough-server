@@ -34,7 +34,7 @@ public class StatisticController extends BaseController {
      *
      * @return list
      */
-    @RouterMapping(api = "/statistic/list", method = "GET")
+    @RouterMapping(api = "/tcpth/list", method = "GET")
     public List<Map<String, String>> statisticList() {
         List<Map<String, String>> res = new ArrayList<>();
         List<ConnectModel> list = globalObject.getConnectList();
@@ -79,7 +79,7 @@ public class StatisticController extends BaseController {
      * @param json json
      * @return boolean
      */
-    @RouterMapping(api = "/statistic/register/add", method = "POST")
+    @RouterMapping(api = "/tcpth/register/add", method = "POST")
     public boolean addRegister(@JsonParam("json") JSONObject json) {
         LOG.info("[ HTTP Server Request] Add register. \n" + json.toJSONString());
         String name = json.getString("name");
@@ -126,7 +126,7 @@ public class StatisticController extends BaseController {
         return hasSend;
     }
 
-    @RouterMapping(api = "/statistic/register/delete", method = "POST")
+    @RouterMapping(api = "/tcpth/register/delete", method = "POST")
     public boolean deleteRegister(@JsonParam("json") JSONObject json) {
         LOG.info("[ HTTP Server Request] Remove register. \n" + json.toJSONString());
         String name = (String) json.get("name");

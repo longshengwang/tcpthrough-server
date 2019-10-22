@@ -57,7 +57,7 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
                 }
             });
         } else {
-            LOG.info("Receive the inner data client msg");
+//            LOG.info("Receive the inner data client msg");
 
             //TODO need to verify the channel id. The bad network may only send part of channel id.
             ByteBuf bf = (ByteBuf)msg;
@@ -72,8 +72,14 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
     }
 
     public void connectOuterChannel(ChannelHandlerContext ctx){
-        LOG.info("Try to connect outChannel with dataClient channel!");
+        //LOG.info("Try to connect outChannel with dataClient channel!");
+
         ConnectModel connectModel = globalObject.getOuterConnection(channelId);
+        if(connectModel == null){
+            LOG.error("The channel id " + channelId + " is not valid, someone may try to attach the data server! The channel address is local:" + ctx.channel().localAddress() + " , remote: " + ctx.channel().remoteAddress() );
+            ctx.channel().close();
+            return;
+        }
         connectModel.getOuterHandler().setDataChannel(ctx.channel());
         outChannel = connectModel.getOutChannel();
         outChannel.read();
