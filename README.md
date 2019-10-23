@@ -1,9 +1,9 @@
 # Tcp Through Server
 
 ## 1. 说明
-该项目只是`server`端，还有client端，对应的地址是 ``.
+该项目只是`server`端，还有client端，对应的地址是 [https://github.com/longshengwang/tcpthrough-client](https://github.com/longshengwang/tcpthrough-client`)。
 
-这两个项目的主要功能是可以从一个公网IP地址来访问很多内网下服务(NAT后面的网络)，比如 `ssh`、`scp`、`http`等 ( 只要是tcp协议就可以 )
+这两个项目的主要功能是可以从一个公网IP地址来访问很多内网下服务(NAT后面的网络)，比如 `ssh`、`scp`、`http`、`vnc`等 ( 只要是tcp协议就可以 )
 
 ## 2. 编译
 
@@ -101,7 +101,23 @@ POST  http://localhost:8080/tcpth/register/delete
 true -> 成功
 false -> 失败
 
+#### 3.4. 安全模式下增加信任IP
+1. 访问接口
+```
+GET  http://localhost:8080/tcpth/auth/addtrustip/{client_name}/{ip_address}
+```
+2. 返回信息
+true -> 成功
+false -> 失败
 
+#### 3.5. 安全模式下删除信任IP
+1. 访问接口
+```
+GET  http://localhost:8080/tcpth/auth/rmtrustip/{client_name}/{ip_address}
+```
+2. 返回信息
+true -> 成功
+false -> 失败
 
 
 ## 4. 测试结果 
@@ -113,3 +129,31 @@ false -> 失败
 后来加了流量统计以后的速度有所下降，基本也能保证在 `10Gb/s` 上下。
 
 >注：这里是小b哦。
+
+## 5. 亮点功能
+
+1. 支持 http api 动态添加和删除代理信息(支持一个client可以代理多个内网端口)
+2. 支持**安全模式**。只有在信任列表的IP地址才可以访问client (防止攻击的最好方式)
+3. 支持速度限制，功能已经测试可用。只是目前在代码中没有限速，可自己修改代码，具体代码在server库中的`OuterServer`中，注释中有说明。
+4. client可设定不允许server控制 (client端的`isRemoteManage`参数)
+5. 支持查看实时速率(不需要用总量来计算)
+6. 管理通道进行了SSL加密，防止注册信息被抓包
+7. 数据平面和控制平面分离，提高性能。
+8. 管理平面和控制平面都进行了安全性校验，不正确的连接会被kill掉，拒绝攻击。
+9. Server可以增加密码校验，不允许其他的client注册。Server启动时候加上 `-s` 参数
+10. 后续可开发总量控制，traffic shaping counter中可以获取总量，所以想要进行总量控制，也是很easy的。
+
+
+## 6. 可再完善的功能
+##### 6.1. 自己开发网页调用 http api 来显示代理信息
+目前Server端的http server没有增加cookie和密码之类的校验，所以只允许运行在 localhost。
+可以开发html 然后通过nginx反向代理来访问localhost http api。
+安全性校验可以用base-auth。当然要记得开启 https(http的basic auth可是明文) 
+
+##### 6.2. server增加用户登录管理，以及每个用户的登录页面。
+这样就可以用管理员来设定每个用户的限额，每个用户也可以自己操作自己的client，比如增加代理和查看详情，以及 6.1 中提到的安全设定
+
+
+
+
+
