@@ -5,6 +5,9 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import io.netty.handler.traffic.GlobalTrafficShapingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,12 +28,17 @@ public class OuterServer implements Runnable{
     private Channel managerChannel;
     private GlobalObject globalObject;
     public GlobalTrafficShapingHandler gtsh;
+    // The read limit of traffic shape does not work well when the auto read is false。
+    // So we need dataGtsh for data channel
+    // the read limit = gtsh's write limit, the write limit = gtsh's read limit
+    public GlobalTrafficShapingHandler dataGtsh;
 
 
     public OuterServer(RegisterProtocol registerProtocol, Channel managerChannel, GlobalObject globalObject) {
         this.registerProtocol = registerProtocol;
         this.globalObject = globalObject;
         this.managerChannel = managerChannel;
+
     }
 
     public void run() {
@@ -39,15 +47,20 @@ public class OuterServer implements Runnable{
 
         try {
             ServerBootstrap bootstrap = new ServerBootstrap();
+            // read limit not work well, so we should add the gtsh to the data transfer。
             gtsh = new GlobalTrafficShapingHandler(workGroup, 0, 0, 1000);
+            dataGtsh = new GlobalTrafficShapingHandler(workGroup, 0, 0, 1000);
+//            gtsh = new GlobalTrafficShapingHandler(workGroup, 1024*1024, 2*1024*1024, 1000);
+//            dataGtsh = new GlobalTrafficShapingHandler(workGroup, 2*1024*1024, 1024*1024, 1000);
 
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
+                            socketChannel.pipeline().addLast("gtsh", gtsh);
+//                            socketChannel.pipeline().addLast(new ChannelTrafficShapingHandler(1024 * 1024,1024 * 1024));
 
-                            socketChannel.pipeline().addLast(gtsh);
                             socketChannel.pipeline().addLast( new OuterHandler(managerChannel, globalObject, registerProtocol));
 
                         }

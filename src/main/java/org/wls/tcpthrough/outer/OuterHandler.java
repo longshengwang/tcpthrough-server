@@ -22,7 +22,7 @@ public class OuterHandler extends ChannelInboundHandlerAdapter {
     private String channelId;
     private GlobalObject globalObject;
     private Channel dataChannel;
-    private Channel manageChannel;
+    public Channel manageChannel;
     private RegisterProtocol registerProtocol;;
 
     public OuterHandler(Channel manageChannel, GlobalObject globalObject, RegisterProtocol registerProtocol){

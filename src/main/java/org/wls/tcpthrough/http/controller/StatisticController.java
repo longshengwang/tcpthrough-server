@@ -39,7 +39,6 @@ public class StatisticController extends BaseController {
         List<Map<String, String>> res = new ArrayList<>();
         List<ConnectModel> list = globalObject.getConnectList();
 
-
         for (List<OuterServer> outerServers : globalObject.getAllOuterServers()) {
             for (OuterServer outerServer : outerServers) {
                 TrafficCounter trafficCounter = outerServer.gtsh.trafficCounter();
@@ -51,6 +50,8 @@ public class StatisticController extends BaseController {
                 map.put("is_remote_manage", registerProtocol.getIsRemoteManage() + "");
                 map.put("read_speed", (trafficCounter.lastReadThroughput() >> 10) + "KB/s");
                 map.put("write_speed", (trafficCounter.lastWriteThroughput() >> 10) + "KB/s");
+                map.put("read_bytes", (trafficCounter.cumulativeReadBytes() >> 10) + "KB");
+                map.put("write_bytes", (trafficCounter.cumulativeWrittenBytes() >> 10) + "KB");
 
                 AtomicInteger connection_count = new AtomicInteger();
                 list.forEach(connectModel -> {

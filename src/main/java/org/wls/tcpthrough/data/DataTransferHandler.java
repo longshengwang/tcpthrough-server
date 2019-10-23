@@ -2,11 +2,15 @@ package org.wls.tcpthrough.data;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.*;
+import io.netty.handler.traffic.ChannelTrafficShapingHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.wls.tcpthrough.model.ConnectModel;
 import org.wls.tcpthrough.model.GlobalObject;
+import org.wls.tcpthrough.model.ManagerProtocolBuf;
+import org.wls.tcpthrough.outer.OuterServer;
 
 /**
  * Created by wls on 2019/10/15.
@@ -81,10 +85,19 @@ public class DataTransferHandler extends ChannelInboundHandlerAdapter {
             return;
         }
         connectModel.getOuterHandler().setDataChannel(ctx.channel());
+
         outChannel = connectModel.getOutChannel();
         outChannel.read();
         isBind = true;
         LOG.info("Connect the two channel successfully.");
+//        ctx.pipeline().addFirst(new ChannelTrafficShapingHandler(1024*1024, 1024*1024));
+
+        ManagerProtocolBuf.RegisterProtocol outPb = connectModel.getOuterHandler().getRegisterProtocol();
+        OuterServer os = globalObject.getChannelOuterServer(connectModel.getOuterHandler().manageChannel).stream().filter(outerServer -> outerServer.getRegisterProtocol().getRemoteProxyPort() == outPb.getRemoteProxyPort()).findFirst().orElse(null);
+        if(os != null){
+            ctx.pipeline().addFirst(os.dataGtsh);
+        }
+
         ctx.channel().read();
     }
 
