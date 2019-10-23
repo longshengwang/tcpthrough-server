@@ -15,6 +15,7 @@ import org.wls.tcpthrough.model.GlobalObject;
 import org.wls.tcpthrough.model.ManagerProtocolBuf;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol;
 import org.wls.tcpthrough.model.ResponseType;
+import org.wls.tcpthrough.model.TrustIpsModel;
 
 /**
  * Created by wls on 2019/10/15.
@@ -28,16 +29,19 @@ public class OuterServer implements Runnable{
     private Channel managerChannel;
     private GlobalObject globalObject;
     public GlobalTrafficShapingHandler gtsh;
+
     // The read limit of traffic shape does not work well when the auto read is false。
     // So we need dataGtsh for data channel
     // the read limit = gtsh's write limit, the write limit = gtsh's read limit
     public GlobalTrafficShapingHandler dataGtsh;
+    private TrustIpsModel trustIpModel;
 
 
     public OuterServer(RegisterProtocol registerProtocol, Channel managerChannel, GlobalObject globalObject) {
         this.registerProtocol = registerProtocol;
         this.globalObject = globalObject;
         this.managerChannel = managerChannel;
+        this.trustIpModel = new TrustIpsModel();
 
     }
 
@@ -50,8 +54,12 @@ public class OuterServer implements Runnable{
             // read limit not work well, so we should add the gtsh to the data transfer。
             gtsh = new GlobalTrafficShapingHandler(workGroup, 0, 0, 1000);
             dataGtsh = new GlobalTrafficShapingHandler(workGroup, 0, 0, 1000);
-//            gtsh = new GlobalTrafficShapingHandler(workGroup, 1024*1024, 2*1024*1024, 1000);
-//            dataGtsh = new GlobalTrafficShapingHandler(workGroup, 2*1024*1024, 1024*1024, 1000);
+
+            // Read/write limit example
+            /*
+            gtsh = new GlobalTrafficShapingHandler(workGroup, 1024*1024, 2*1024*1024, 1000);
+            dataGtsh = new GlobalTrafficShapingHandler(workGroup, 2*1024*1024, 1024*1024, 1000);
+            */
 
             bootstrap.group(bossGroup, workGroup)
                     .channel(NioServerSocketChannel.class)
@@ -61,7 +69,7 @@ public class OuterServer implements Runnable{
                             socketChannel.pipeline().addLast("gtsh", gtsh);
 //                            socketChannel.pipeline().addLast(new ChannelTrafficShapingHandler(1024 * 1024,1024 * 1024));
 
-                            socketChannel.pipeline().addLast( new OuterHandler(managerChannel, globalObject, registerProtocol));
+                            socketChannel.pipeline().addLast( new OuterHandler(managerChannel, globalObject, registerProtocol, trustIpModel));
 
                         }
                     }).childOption(ChannelOption.AUTO_READ, false);
@@ -127,5 +135,9 @@ public class OuterServer implements Runnable{
 
     public Channel getManagerChannel() {
         return managerChannel;
+    }
+
+    public TrustIpsModel getTrustIpModel() {
+        return trustIpModel;
     }
 }

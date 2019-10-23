@@ -9,6 +9,10 @@ import org.wls.tcpthrough.model.GlobalObject;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.ManagerResponse;
 import org.wls.tcpthrough.model.ManagerProtocolBuf.RegisterProtocol;
 import org.wls.tcpthrough.model.ResponseType;
+import org.wls.tcpthrough.model.TrustIpsModel;
+
+import java.net.Inet4Address;
+import java.net.InetSocketAddress;
 
 
 /**
@@ -23,19 +27,32 @@ public class OuterHandler extends ChannelInboundHandlerAdapter {
     private GlobalObject globalObject;
     private Channel dataChannel;
     public Channel manageChannel;
-    private RegisterProtocol registerProtocol;;
+    private RegisterProtocol registerProtocol;
+    private TrustIpsModel trustIpsModel;
 
-    public OuterHandler(Channel manageChannel, GlobalObject globalObject, RegisterProtocol registerProtocol){
+    public OuterHandler(Channel manageChannel, GlobalObject globalObject, RegisterProtocol registerProtocol, TrustIpsModel trustIpsModel){
         this.manageChannel = manageChannel;
         this.globalObject = globalObject;
         this.registerProtocol = registerProtocol;
+        this.trustIpsModel = trustIpsModel;
     }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        LOG.debug("Outer server has a new connection");
+        LOG.info("Outer server has a new connection" + ctx.channel().remoteAddress());
+
+        if(registerProtocol.getIsAuth()){
+            InetSocketAddress inetAddr = (InetSocketAddress)ctx.channel().remoteAddress();
+            if(!trustIpsModel.contains(inetAddr)){
+                ctx.channel().close();
+                LOG.warn("The remote ip " + inetAddr + " is not in the trust ips list");
+                return;
+            }
+        }
+
         channelId = Tools.uuid();
         while (globalObject.isOuterChannelUUIDExist(channelId)) {
+            LOG.warn("The uuid " +channelId +" is repeat.");
             channelId = Tools.uuid();
         }
 
@@ -68,10 +85,13 @@ public class OuterHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         ctx.channel().close();
-        globalObject.deleteOuterConnection(channelId);
+        if(channelId != null){
+            globalObject.deleteOuterConnection(channelId);
+        }
         if (dataChannel != null) {
             dataChannel.close();
         }
+
     }
 
     @Override
