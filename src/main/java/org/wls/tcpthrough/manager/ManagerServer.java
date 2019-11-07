@@ -98,10 +98,4 @@ public class ManagerServer implements Runnable{
         }
 
     }
-
-//    public static void main(String[] args) throws InterruptedException {
-//        ManagerServer server = new ManagerServer(1099);
-//        new Thread(server).start();
-//        TimeUnit.SECONDS.sleep(100000);
-//    }
 }

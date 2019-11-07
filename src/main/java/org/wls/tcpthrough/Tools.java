@@ -4,7 +4,7 @@ import org.wls.tcpthrough.model.ManagerProtocolBuf;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by wls on 2019/10/16.
@@ -56,6 +56,12 @@ public class Tools {
         return false;
     }
 //    public static void main(String[] args) {
+//        List<String> d = new ArrayList<>(10);
+//        List<String> e = new ArrayList<>();
+
+
+//
 //    }
+
 
 }

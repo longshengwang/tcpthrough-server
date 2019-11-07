@@ -3,6 +3,8 @@ package org.wls.tcpthrough.model;
 import java.net.Inet4Address;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -11,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by wls on 2019/10/23.
  */
 public class TrustIpsModel {
-    private List<String> ips;
+    private List<String> ips = null;
     private Lock lock;
 
     public TrustIpsModel() {
@@ -70,6 +72,16 @@ public class TrustIpsModel {
             lock.unlock();
         }
 
+    }
+
+    public List<String>  getIps(){
+        List<String> res = new ArrayList<>();
+        ips.forEach(ip-> res.add(ip));
+        return res;
+    }
+
+    public void  copyIps(List<String> copyIps){
+        ips.forEach(ip-> copyIps.add(ip));
     }
 }
 

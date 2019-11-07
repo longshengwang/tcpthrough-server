@@ -10,8 +10,7 @@ import org.wls.tcpthrough.http.lib.annotation.RouterMapping;
 import org.wls.tcpthrough.model.GlobalObject;
 
 import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthController extends BaseController{
@@ -52,12 +51,82 @@ public class AuthController extends BaseController{
     {
         Channel mgmtChannel = globalObject.getManageChannelByName(clientName);
         if(mgmtChannel == null){
-            return false;
+            return true;
         } else {
             globalObject.getChannelOuterServer(mgmtChannel).forEach(outerServer -> outerServer.getTrustIpModel().deleteIps(ip));
-            return false;
+            return true;
         }
     }
+
+
+    @RouterMapping(api = "/tcpth/auth/addtrustip/{clientName}/{proxyPort}/{ip}", method = "GET")
+    public boolean addTrustIp(@PathParam("ip") String ip, @PathParam("clientName") String clientName, @PathParam("proxyPort") String proxyPort)
+    {
+        try{
+            Channel mgmtChannel = globalObject.getManageChannelByName(clientName);
+            if(mgmtChannel == null){
+                return false;
+            } else {
+                globalObject.getChannelOuterServer(mgmtChannel).forEach(outerServer -> {
+                    if(outerServer.getRegisterProtocol().getRemoteProxyPort() == Integer.parseInt(proxyPort))
+                        outerServer.getTrustIpModel().addIp(ip);
+                });
+                return true;
+            }
+        } catch(Exception e){
+            LOG.error("", e);
+            return  false;
+        }
+
+    }
+
+    @RouterMapping(api = "/tcpth/auth/rmtrustip/{clientName}/{proxyPort}/{ip}", method = "GET")
+    public boolean rmTrustIp(@PathParam("ip") String ip, @PathParam("clientName") String clientName, @PathParam("proxyPort") String proxyPort)
+    {
+        Channel mgmtChannel = globalObject.getManageChannelByName(clientName);
+        if(mgmtChannel == null){
+            return true;
+        } else {
+            globalObject.getChannelOuterServer(mgmtChannel).forEach(outerServer -> {
+                if(outerServer.getRegisterProtocol().getRemoteProxyPort() == Integer.parseInt(proxyPort))
+                    outerServer.getTrustIpModel().deleteIps(ip);
+            });
+            return true;
+        }
+    }
+
+    @RouterMapping(api = "/tcpth/auth/trustip/{clientName}/{proxyPort}", method = "GET")
+    public List<String> getTrustIp(@PathParam("clientName") String clientName, @PathParam("proxyPort") String proxyPort)
+    {
+        List<String> ips = new ArrayList<>();
+        Channel mgmtChannel = globalObject.getManageChannelByName(clientName);
+        if(mgmtChannel == null){
+            return ips;
+        } else {
+            globalObject.getChannelOuterServer(mgmtChannel).forEach(outerServer -> {
+                if(outerServer.getRegisterProtocol().getRemoteProxyPort() == Integer.parseInt(proxyPort)){
+                    outerServer.getTrustIpModel().copyIps(ips);
+                }
+            });
+            return ips;
+        }
+    }
+
+    @RouterMapping(api = "/tcpth/auth/trustip/{clientName}", method = "GET")
+    public Map<String, List<String>> getTrustIp(@PathParam("clientName") String clientName)
+    {
+        Map<String, List<String>> map = new HashMap<>();
+        Channel mgmtChannel = globalObject.getManageChannelByName(clientName);
+        if(mgmtChannel == null){
+            return map;
+        } else {
+            globalObject.getChannelOuterServer(mgmtChannel).forEach(outerServer -> {
+                map.put(outerServer.getRegisterProtocol().getRemoteProxyPort() + "", outerServer.getTrustIpModel().getIps());
+            });
+            return map;
+        }
+    }
+
 
 //    /**
 //     * If use nginx to proxy the validate api. 'X-Real-IP' is used to save the real remote ip in the headers

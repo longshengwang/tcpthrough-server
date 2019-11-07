@@ -48,6 +48,7 @@ public class StatisticController extends BaseController {
                 map.put("proxy_port", registerProtocol.getRemoteProxyPort() + "");
                 map.put("local", registerProtocol.getLocalHost() + ":" + registerProtocol.getLocalPort());
                 map.put("is_remote_manage", registerProtocol.getIsRemoteManage() + "");
+                map.put("is_auth", registerProtocol.getIsAuth() + "");
                 map.put("read_speed", (trafficCounter.lastReadThroughput() >> 10) + "KB/s");
                 map.put("write_speed", (trafficCounter.lastWriteThroughput() >> 10) + "KB/s");
                 map.put("read_bytes", (trafficCounter.cumulativeReadBytes() >> 10) + "KB");
