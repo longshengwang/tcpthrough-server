@@ -130,7 +130,35 @@ false -> 失败
 
 >注：这里是小b哦。
 
-## 5. 亮点功能
+## 5. 命令行操作HTTP Api
+#### 5.1. 安装
+```
+pip install tcpth.cmd
+```
+#### 5.2. 使用
+```
+➜  tcp-console git:(master) ✗ tcpth_cmd
+Welcome to use the tcp through.
+  ______              ________                           __
+ /_  __/________     /_  __/ /_  _________  __  ______ _/ /_
+  / / / ___/ __ \     / / / __ \/ ___/ __ \/ / / / __ `/ __ \
+ / / / /__/ /_/ /    / / / / / / /  / /_/ / /_/ / /_/ / / / /
+/_/  \___/ .___/    /_/ /_/ /_/_/   \____/\__,_/\__, /_/ /_/
+        /_/                                    /____/
+
+
+tcpthrough> help
+    list                                 -- get all registration
+    get <name>                           -- get special name information
+    register add <name> <localhost:port> <proxy port>    -- add registration
+    register delete <name> <proxy port>                  -- delete registration
+    trust add <name> [<proxy port>] <trusted ip>        -- add trust ip
+    trust delete <name> [<proxy port>]  <trusted ip>     -- delete trust ip
+    trust get <name> [<proxy port>]     -- get trust ip
+tcpthrough>
+```
+
+## 6. 亮点功能
 
 1. 支持 http api 动态添加和删除代理信息(支持一个client可以代理多个内网端口)
 2. 支持**安全模式**。只有在信任列表的IP地址才可以访问client (防止攻击的最好方式)
@@ -144,13 +172,13 @@ false -> 失败
 10. 后续可开发总量控制，traffic shaping counter中可以获取总量，所以想要进行总量控制，也是很easy的。
 
 
-## 6. 可再完善的功能
-##### 6.1. 自己开发网页调用 http api 来显示代理信息
+## 7. 可再完善的功能
+##### 7.1. 自己开发网页调用 http api 来显示代理信息
 目前Server端的http server没有增加cookie和密码之类的校验，所以只允许运行在 localhost。
 可以开发html 然后通过nginx反向代理来访问localhost http api。
 安全性校验可以用base-auth。当然要记得开启 https(http的basic auth可是明文) 
 
-##### 6.2. server增加用户登录管理，以及每个用户的登录页面。
+##### 7.2. server增加用户登录管理，以及每个用户的登录页面。
 这样就可以用管理员来设定每个用户的限额，每个用户也可以自己操作自己的client，比如增加代理和查看详情，以及 6.1 中提到的安全设定
 
 
