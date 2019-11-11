@@ -1,7 +1,7 @@
 # Tcp Through Server
 
 ## 1. 说明
-该项目只是`server`端，还有client端，对应的地址是 [https://github.com/longshengwang/tcpthrough-client](https://github.com/longshengwang/tcpthrough-client`)。
+该项目只是`server`端，还有client端，对应的地址是 [https://github.com/longshengwang/tcpthrough-client](https://github.com/longshengwang/tcpthrough-client`)  。
 
 这两个项目的主要功能是可以从一个公网IP地址来访问很多内网下服务(NAT后面的网络)，比如 `ssh`、`scp`、`http`、`vnc`等 ( 只要是tcp协议就可以 )
 
